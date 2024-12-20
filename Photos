@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galactic Photos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            color: white;
+            background: url('https://www.wallpaperflare.com/static/87/981/130/space-planet-universe-galaxy-wallpaper.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        header {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            transition: top 0.3s;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: space-around;
+            padding: 0;
+            margin: 0;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-family: 'Cinzel', serif;
+            transition: color 0.3s;
+        }
+        nav a:hover {
+            color: #FFD700;
+        }
+        .gallery {
+            margin-top: 6rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1rem;
+        }
+        .gallery img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .gallery img:hover {
+            transform: scale(1.05);
+        }
+        footer {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+        footer a {
+            color: white;
+            text-decoration: none;
+        }
+        footer a:hover {
+            color: #FFD700;
+        }
+        .back-button {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="albums.html">Albums</a></li>
+                <li><a href="upload.html">Upload</a></li>
+                <li><a href="account.html">Account</a></li>
+            </ul>
+        </nav>
+    </header>
+    <button class="back-button" onclick="goBack()">&#8592; Back</button>
+    <main>
+        <section class="gallery" id="gallery">
+            <!-- Photos will be dynamically inserted here -->
+        </section>
+    </main>
+    <footer>
+        <a href="#" onclick="promptAdminPassword()">Made by Daddy</a>
+    </footer>
+    <script>
+        // Sample photo data
+        const photos = [
+            'photo1.jpg',
+            'photo2.jpg',
+            'photo3.jpg',
+            // Add more photo URLs here
+        ];
+
+        const gallery = document.getElementById('gallery');
+        photos.forEach(photo => {
+            const img = document.createElement('img');
+            img.src = photo;
+            img.alt = 'Galactic Photo';
+            img.addEventListener('click', () => viewPhoto(photo));
+            gallery.appendChild(img);
+        });
+
+        function viewPhoto(photo) {
+            // Implement Google Photos-like view functionality
+            alert(`Viewing photo: ${photo}`);
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+
+        function promptAdminPassword() {
+            const password = prompt('Enter admin password:');
+            if (password === 'admin123') {
+                alert('Access granted!');
+            } else {
+                alert('Access denied!');
+            }
+        }
+    </script>
+</body>
+</html>
