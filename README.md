@@ -23,6 +23,13 @@
             <section id="hero">
                 <h1>Store and organize your intergalactic memories</h1>
                 <button id="signUpBtn">Sign Up</button>
+                <button id="uploadGalleryBtn">Upload Gallery</button>
+            </section>
+            <section id="dynamicPhotos">
+                <!-- Dynamic photo slots -->
+                <div class="photo-slot"></div>
+                <div class="photo-slot"></div>
+                <div class="photo-slot"></div>
             </section>
             <section id="features">
                 <div class="feature">
@@ -86,6 +93,24 @@ nav a {
     margin-top: 50px;
 }
 
+#dynamicPhotos {
+    display: flex;
+    justify-content: space-around;
+    margin: 50px 0;
+}
+
+.photo-slot {
+    width: 200px;
+    height: 200px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 18px;
+}
+
 #features {
     display: flex;
     justify-content: space-around;
@@ -105,13 +130,55 @@ footer {
     text-align: center;
     margin-top: 50px;
 }
+
+@media (max-width: 600px) {
+    .feature img {
+        width: 80px;
+        height: 80px;
+    }
+}
+document.addEventListener('DOMContentLoaded', () => {
+    const signUpBtn = document.getElementById('signUpBtn');
+    signUpBtn.addEventListener('click', () => {
+        alert('Sign Up functionality coming soon!');
+    });
+
+    const uploadGalleryBtn = document.getElementById('uploadGalleryBtn');
+    uploadGalleryBtn.addEventListener('click', () => {
+        if (confirm('Allow this website to access your photo gallery?')) {
+            // Implement functionality to copy gallery to the website
+            alert('Gallery will be copied to the website.');
+        }
+    });
+
+    const footer = document.querySelector('footer p');
+    footer.addEventListener('click', () => {
+        const password = prompt('Enter admin password:');
+        if (password === 'Takudzwa011#') {
+            alert('Admin access granted');
+        } else {
+            alert('Incorrect password');
+        }
+    });
+
+    // Dynamic photo slots
+    const photoSlots = document.querySelectorAll('.photo-slot');
+    fetch('/random-photos')
+        .then(response => response.json())
+        .then(photos => {
+            photoSlots.forEach((slot, index) => {
+                slot.style.backgroundImage = `url(${photos[index].url})`;
+                slot.textContent = '';
+            });
+        });
+});
 const express = require('express');
 const admin = require('firebase-admin');
 const bodyParser = require('body-parser');
 const app = express();
 const port = 3000;
 
-const serviceAccount = require('./path/to/serviceAccountKey.json');
+const serviceAccount = require('../config/serviceAccountKey.json');
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
@@ -157,6 +224,23 @@ app.post('/upload', (req, res) => {
     });
 
     stream.end(fileBuffer);
+});
+
+app.get('/random-photos', (req, res) => {
+    const userId = 'defaultUser'; // Replace with actual user ID
+    db.collection('users').doc(userId).collection('files').get()
+        .then(snapshot => {
+            if (snapshot.empty) {
+                res.status(404).send('No photos found.');
+                return;
+            }
+            const photos = snapshot.docs.map(doc => doc.data());
+            const randomPhotos = photos.sort(() => 0.5 - Math.random()).slice(0, 3);
+            res.json(randomPhotos);
+        })
+        .catch(err => {
+            res.status(500).send(err);
+        });
 });
 
 app.listen(port, () => {
