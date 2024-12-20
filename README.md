@@ -49,3 +49,116 @@
     <script src="scripts.js"></script>
 </body>
 </html>
+body {
+    background-image: url('galaxy.jpg');
+    color: white;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+}
+
+#hero {
+    text-align: center;
+    margin-top: 50px;
+}
+
+#features {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 50px;
+}
+
+.feature {
+    text-align: center;
+}
+
+.feature img {
+    width: 100px;
+    height: 100px;
+}
+
+footer {
+    text-align: center;
+    margin-top: 50px;
+}
+const express = require('express');
+const admin = require('firebase-admin');
+const bodyParser = require('body-parser');
+const app = express();
+const port = 3000;
+
+const serviceAccount = require('./path/to/serviceAccountKey.json');
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    storageBucket: 'your-firebase-storage-bucket'
+});
+
+const db = admin.firestore();
+const bucket = admin.storage().bucket();
+
+app.use(bodyParser.json());
+app.use(express.static('public'));
+
+app.post('/upload', (req, res) => {
+    const { file, userId } = req.body;
+    const fileName = `${userId}/${file.name}`;
+    const fileBuffer = Buffer.from(file.data, 'base64');
+
+    const fileUpload = bucket.file(fileName);
+    const stream = fileUpload.createWriteStream({
+        metadata: {
+            contentType: file.type
+        }
+    });
+
+    stream.on('error', (err) => {
+        res.status(500).send(err);
+    });
+
+    stream.on('finish', () => {
+        fileUpload.getSignedUrl({
+            action: 'read',
+            expires: '03-01-2500'
+        }).then((url) => {
+            db.collection('users').doc(userId).collection('files').add({
+                name: file.name,
+                url: url[0]
+            }).then(() => {
+                res.status(200).send('File uploaded successfully');
+            }).catch((err) => {
+                res.status(500).send(err);
+            });
+        });
+    });
+
+    stream.end(fileBuffer);
+});
+
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
+});
