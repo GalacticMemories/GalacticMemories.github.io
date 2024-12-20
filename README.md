@@ -11,11 +11,11 @@
             margin: 0;
             font-family: 'Roboto', sans-serif;
             color: white;
-            background: url('https://www.wallpaperflare.com/static/87/981/130/space-planet-universe-galaxy-wallpaper.jpg') no-repeat center center fixed;
-            background-size: cover;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            background: url('https://www.wallpaperflare.com/static/87/981/130/space-planet-universe-galaxy-wallpaper.jpg') no-repeat center center fixed;
+            background-size: cover;
         }
         header {
             background: rgba(0, 0, 0, 0.7);
@@ -25,10 +25,6 @@
             top: 0;
             left: 0;
             z-index: 1000;
-            transition: top 0.3s;
-        }
-        .header-hidden {
-            top: -80px;
         }
         nav ul {
             list-style: none;
@@ -36,6 +32,7 @@
             justify-content: space-around;
             padding: 0;
             margin: 0;
+            width: 100%;
         }
         nav a {
             color: white;
@@ -46,6 +43,15 @@
         }
         nav a:hover {
             color: #FFD700;
+        }
+        .menu-toggle {
+            display: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
         }
         .hero {
             text-align: center;
@@ -63,72 +69,131 @@
             color: white;
             text-align: center;
             padding: 1rem;
-            position: absolute;
+            position: fixed;
             bottom: 0;
+            left: 0;
             width: 100%;
+            height: 100%; /* Make footer fill the screen */
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         footer a {
             color: white;
             text-decoration: none;
+            font-size: 1.5rem;
         }
         footer a:hover {
             color: #FFD700;
         }
-        .toggle-button {
+        .modal {
+            display: none;
             position: fixed;
-            top: 10px;
-            left: 10px;
-            background: transparent;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: #222;
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .modal-content input {
+            margin-top: 1rem;
+            padding: 0.5rem;
+            width: 80%;
+        }
+        .modal-content button {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: #FFD700;
             border: none;
-            color: white;
-            font-size: 1.5rem;
+            color: black;
             cursor: pointer;
+            border-radius: 4px;
+        }
+        .modal-content button:hover {
+            background: #FFC107;
+        }
+        @media only screen and (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                display: none;
+            }
+            nav ul.active {
+                display: flex;
+            }
+            .menu-toggle {
+                display: block;
+            }
+            .hero h1 {
+                font-size: 2rem;
+            }
         }
     </style>
 </head>
 <body>
-    <header id="main-header">
+    <header>
         <nav>
-            <ul>
-                <li><a href="photos.html">Photos</a></li>
-                <li><a href="albums.html">Albums</a></li>
-                <li><a href="upload.html">Upload</a></li>
-                <li><a href="account.html">Account</a></li>
+            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+            <ul id="menu">
+                <li><a href="#explore">Explore</a></li>
+                <li><a href="#albums">Albums</a></li>
+                <li><a href="#search">Search</a></li>
+                <li><a href="#share">Share</a></li>
+                <li><a href="#account">Account</a></li>
+                <li><a href="#face-recognition">Face Recognition</a></li>
+                <li><a href="#photo-editing">Photo Editing</a></li>
+                <li><a href="#slideshow">Slideshow</a></li>
             </ul>
         </nav>
     </header>
-    <button class="toggle-button" onclick="toggleHeader()">&#9728;</button>
+
     <main>
         <section class="hero">
             <h1>Store and organize your intergalactic memories</h1>
         </section>
+        <!-- Add content sections here -->
     </main>
+
     <footer>
-        <a href="#" onclick="promptAdminPassword()">Made by Daddy</a>
+        <a href="#" id="admin-link" onclick="showPasswordPrompt()">Made by Daddy</a>
     </footer>
+
+    <div class="modal" id="password-modal">
+        <div class="modal-content">
+            <h2>Enter Admin Password</h2>
+            <input type="password" id="admin-password" placeholder="Password">
+            <button onclick="validatePassword()">Submit</button>
+        </div>
+    </div>
+
     <script>
-        let lastScrollY = window.scrollY;
-        const header = document.getElementById('main-header');
-
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > lastScrollY) {
-                header.classList.add('header-hidden');
-            } else {
-                header.classList.remove('header-hidden');
-            }
-            lastScrollY = window.scrollY;
-        });
-
-        function toggleHeader() {
-            header.classList.toggle('header-hidden');
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            menu.classList.toggle('active');
         }
 
-        function promptAdminPassword() {
-            const password = prompt('Enter admin password:');
+        function showPasswordPrompt() {
+            const modal = document.getElementById('password-modal');
+            modal.classList.add('active');
+        }
+
+        function validatePassword() {
+            const password = document.getElementById('admin-password').value;
             if (password === 'admin123') {
-                alert('Access granted!');
+                window.location.href = 'admin-login.html';
             } else {
-                alert('Access denied!');
+                alert('Incorrect password. Please try again.');
             }
         }
     </script>
