@@ -73,7 +73,6 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 100%; /* Make footer fill the screen */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -85,44 +84,6 @@
         }
         footer a:hover {
             color: #FFD700;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-        }
-        .modal.active {
-            display: flex;
-        }
-        .modal-content {
-            background: #222;
-            padding: 2rem;
-            border-radius: 8px;
-            text-align: center;
-        }
-        .modal-content input {
-            margin-top: 1rem;
-            padding: 0.5rem;
-            width: 80%;
-        }
-        .modal-content button {
-            margin-top: 1rem;
-            padding: 0.5rem 1rem;
-            background: #FFD700;
-            border: none;
-            color: black;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-        .modal-content button:hover {
-            background: #FFC107;
         }
         @media only screen and (max-width: 768px) {
             nav ul {
@@ -138,6 +99,47 @@
             .hero h1 {
                 font-size: 2rem;
             }
+        }
+        #admin-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+        }
+        #admin-modal.active {
+            display: flex;
+        }
+        #admin-modal-content {
+            background: url('https://www.wallpaperflare.com/static/482/355/749/galaxy-stars-astronomy-space-wallpaper.jpg') no-repeat center center;
+            background-size: cover;
+            padding: 2rem;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+        #admin-modal-content input {
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            width: 100%;
+            border: none;
+            border-radius: 4px;
+        }
+        #admin-modal-content button {
+            padding: 0.5rem 1rem;
+            background: #FFD700;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #admin-modal-content button:hover {
+            background: #FFC107;
         }
     </style>
 </head>
@@ -166,14 +168,15 @@
     </main>
 
     <footer>
-        <a href="#" id="admin-link" onclick="showPasswordPrompt()">Made by Daddy</a>
+        <a href="#" id="admin-link" onclick="showAdminModal()">Made by Daddy</a>
     </footer>
 
-    <div class="modal" id="password-modal">
-        <div class="modal-content">
+    <div id="admin-modal">
+        <div id="admin-modal-content">
             <h2>Enter Admin Password</h2>
             <input type="password" id="admin-password" placeholder="Password">
-            <button onclick="validatePassword()">Submit</button>
+            <button onclick="checkAdminPassword()">Submit</button>
+            <button onclick="closeAdminModal()">Cancel</button>
         </div>
     </div>
 
@@ -183,17 +186,22 @@
             menu.classList.toggle('active');
         }
 
-        function showPasswordPrompt() {
-            const modal = document.getElementById('password-modal');
+        function showAdminModal() {
+            const modal = document.getElementById('admin-modal');
             modal.classList.add('active');
         }
 
-        function validatePassword() {
+        function closeAdminModal() {
+            const modal = document.getElementById('admin-modal');
+            modal.classList.remove('active');
+        }
+
+        function checkAdminPassword() {
             const password = document.getElementById('admin-password').value;
             if (password === 'admin123') {
                 window.location.href = 'admin-login.html';
             } else {
-                alert('Incorrect password. Please try again.');
+                alert('Incorrect password!');
             }
         }
     </script>
